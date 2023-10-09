@@ -1,0 +1,25 @@
+body {
+    margin: 5%;
+}
+
+.calculations{
+    display: flex;
+    column-gap: 5rem;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    max-width: 15rem;
+    row-gap: 10px;
+}
+
+input {
+    max-width: 150px;
+}
+
+button {
+    max-width: 100px;
+    background-color: lightblue;
+}
