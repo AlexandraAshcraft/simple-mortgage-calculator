@@ -130,188 +130,12 @@ apiForm.addEventListener('submit', (e: Event) => {
 
   if (Array.isArray(paramsString)) {
     paramsString.forEach(string => {
-      const data = fetchData(string) as unknown as Array<APIData>;
-      if (data !== undefined) {
-        data.forEach(listing => {
-          if (minPrice <= listing.price && listing.price <= maxPrice) {
-            const newProperty = new Property(
-              listing.county,
-              listing.propertyType,
-              listing.bedrooms,
-              listing.bathrooms,
-              listing.squareFootage,
-              listing.lotSize,
-              listing.yearBuilt,
-              listing.price,
-              listing.listedDate,
-              listing.addressLine1,
-              listing.city,
-              listing.state,
-              listing.zipCode,
-              listing.formattedAddress,
-              listing.lastSeen,
-              listing.createdDate,
-              listing.status,
-              listing.removedDate,
-              listing.daysOnMarket,
-              listing.id,
-              listing.latitude,
-              listing.longitude,
-            );
-            makeListItem(newProperty);
-          }
-        });
-      }
+      const data = fetchData(string, minPrice, maxPrice);
     });
   } else {
-    const data = fetchData(paramsString) as unknown as Array<APIData>;
-    if (data !== undefined) {
-      data.forEach(listing => {
-        if (minPrice <= listing.price && listing.price <= maxPrice) {
-          const newProperty = new Property(
-            listing.county,
-            listing.propertyType,
-            listing.bedrooms,
-            listing.bathrooms,
-            listing.squareFootage,
-            listing.lotSize,
-            listing.yearBuilt,
-            listing.price,
-            listing.listedDate,
-            listing.addressLine1,
-            listing.city,
-            listing.state,
-            listing.zipCode,
-            listing.formattedAddress,
-            listing.lastSeen,
-            listing.createdDate,
-            listing.status,
-            listing.removedDate,
-            listing.daysOnMarket,
-            listing.id,
-            listing.latitude,
-            listing.longitude,
-          );
-          makeListItem(newProperty);
-        }
-      });
-    }
+    const data = fetchData(paramsString, minPrice, maxPrice);
   }
 });
-
-const parseResults = (
-  arr: APIData[],
-  minPrice: number,
-  maxPrice: number,
-): void => {
-  arr.forEach(listing => {
-    const price = listing.price;
-    if (minPrice <= price && price <= maxPrice) {
-      const newProperty = new Property(
-        listing.county,
-        listing.propertyType,
-        listing.bedrooms,
-        listing.bathrooms,
-        listing.squareFootage,
-        listing.lotSize,
-        listing.yearBuilt,
-        listing.price,
-        listing.listedDate,
-        listing.addressLine1,
-        listing.city,
-        listing.state,
-        listing.zipCode,
-        listing.formattedAddress,
-        listing.lastSeen,
-        listing.createdDate,
-        listing.status,
-        listing.removedDate,
-        listing.daysOnMarket,
-        listing.id,
-        listing.latitude,
-        listing.longitude,
-      );
-      makeListItem(newProperty);
-    }
-  });
-};
-
-const makeListItem = (obj: Property) => {
-  const allProperties = document.querySelector(
-    '.apiSearchResults',
-  ) as HTMLUListElement;
-  const propertyListItem = document.createElement('li') as HTMLLIElement;
-  const propertyList = document.createElement('ul') as HTMLUListElement;
-
-  const countyLI: HTMLLIElement = document.createElement('li');
-  countyLI.innerHTML = obj.county as Property['county'];
-
-  const propertyTypeLI: HTMLLIElement = document.createElement('li');
-  propertyTypeLI.innerHTML = obj.propertyType as Property['propertyType'];
-
-  const bedroomsLI: HTMLLIElement = document.createElement('li');
-  countyLI.innerHTML = obj.bedrooms as unknown as string;
-
-  const bathroomsLI: HTMLLIElement = document.createElement('li');
-  bathroomsLI.innerHTML = obj.bathrooms as unknown as string;
-
-  const squareFootageLI: HTMLLIElement = document.createElement('li');
-  squareFootageLI.innerHTML = obj.squareFootage as unknown as string;
-
-  const lotSizeLI: HTMLLIElement = document.createElement('li');
-  lotSizeLI.innerHTML = obj.lotSize as unknown as string;
-
-  const yearBuiltLI: HTMLLIElement = document.createElement('li');
-  yearBuiltLI.innerHTML = obj.yearBuilt as unknown as string;
-
-  const priceLI: HTMLLIElement = document.createElement('li');
-  priceLI.innerHTML = obj.price as unknown as string;
-
-  const listedDateLI: HTMLLIElement = document.createElement('li');
-  listedDateLI.innerHTML = obj.listedDate as Property['listedDate'];
-
-  const addressLine1LI: HTMLLIElement = document.createElement('li');
-  addressLine1LI.innerHTML = obj.addressLine1 as Property['addressLine1'];
-
-  const cityLI: HTMLLIElement = document.createElement('li');
-  cityLI.innerHTML = obj.city as Property['city'];
-
-  const stateLI: HTMLLIElement = document.createElement('li');
-  stateLI.innerHTML = obj.state as Property['state'];
-
-  const zipCodeLI: HTMLLIElement = document.createElement('li');
-  zipCodeLI.innerHTML = obj.zipCode as Property['zipCode'];
-
-  const formattedAddressLI: HTMLLIElement = document.createElement('li');
-  formattedAddressLI.innerHTML =
-    obj.formattedAddress as Property['formattedAddress'];
-
-  const statusLI: HTMLLIElement = document.createElement('li');
-  statusLI.innerHTML = obj.status as Property['status'];
-
-  const daysOnMarketLI: HTMLLIElement = document.createElement('li');
-  daysOnMarketLI.innerHTML = obj.daysOnMarket as unknown as string;
-
-  propertyListItem.append(
-    countyLI,
-    propertyTypeLI,
-    bedroomsLI,
-    bathroomsLI,
-    squareFootageLI,
-    lotSizeLI,
-    yearBuiltLI,
-    priceLI,
-    listedDateLI,
-    addressLine1LI,
-    cityLI,
-    stateLI,
-    zipCodeLI,
-    formattedAddressLI,
-    statusLI,
-    daysOnMarketLI,
-  );
-  allProperties.append(propertyListItem);
-};
 
 const makeParamsString = (
   zipCode: string,
@@ -340,7 +164,90 @@ const makeParamsString = (
   }
 };
 
-async function fetchData(query: string): Promise<Array<APIData> | undefined> {
+const makeListItem = (obj: Property) => {
+  const allProperties = document.querySelector(
+    '.apiSearchResults',
+  ) as HTMLUListElement;
+  const propertyListItem = document.createElement('li') as HTMLLIElement;
+  const propertyList = document.createElement('ul') as HTMLUListElement;
+
+  const headingLI: HTMLHeadingElement = document.createElement('h3');
+  headingLI.innerHTML = 'Listing:'
+  const formattedAddressLI: HTMLLIElement = document.createElement('li');
+  formattedAddressLI.innerHTML =
+    `Address: ${obj.formattedAddress}` as Property['formattedAddress'];
+    
+  const priceLI: HTMLLIElement = document.createElement('li');
+  priceLI.innerHTML = `Price: ${obj.price}` as unknown as string;
+  
+  const propertyTypeLI: HTMLLIElement = document.createElement('li');
+  propertyTypeLI.innerHTML = `Property Type: ${obj.propertyType}` as Property['propertyType'];
+  
+  const bedroomsLI: HTMLLIElement = document.createElement('li');
+  bedroomsLI.innerHTML = `Bedrooms: ${obj.bedrooms}` as unknown as string;
+  
+  const bathroomsLI: HTMLLIElement = document.createElement('li');
+  bathroomsLI.innerHTML = `Bathrooms: ${obj.bathrooms}` as unknown as string;
+  
+  const squareFootageLI: HTMLLIElement = document.createElement('li');
+  squareFootageLI.innerHTML = `Square Footage: ${obj.squareFootage}sq ft` as unknown as string;
+  
+  const lotSizeLI: HTMLLIElement = document.createElement('li');
+  lotSizeLI.innerHTML = `Lot Size: ${obj.lotSize}sq ft` as unknown as string;
+  
+  const yearBuiltLI: HTMLLIElement = document.createElement('li');
+  yearBuiltLI.innerHTML = `Year Built: ${obj.yearBuilt}` as unknown as string;
+  
+  const listedDateLI: HTMLLIElement = document.createElement('li');
+  listedDateLI.innerHTML = `Date Listed: ${obj.listedDate.slice(0, 10)}` as Property['listedDate'];
+  
+  const daysOnMarketLI: HTMLLIElement = document.createElement('li');
+  daysOnMarketLI.innerHTML = `Days on Market: ${obj.daysOnMarket}` as unknown as string;
+  // const addressLine1LI: HTMLLIElement = document.createElement('li');
+  // addressLine1LI.innerHTML = obj.addressLine1 as Property['addressLine1'];
+  
+  // const cityLI: HTMLLIElement = document.createElement('li');
+  // cityLI.innerHTML = obj.city as Property['city'];
+  
+  // const stateLI: HTMLLIElement = document.createElement('li');
+  // stateLI.innerHTML = obj.state as Property['state'];
+  
+  // const zipCodeLI: HTMLLIElement = document.createElement('li');
+  // zipCodeLI.innerHTML = obj.zipCode as Property['zipCode'];
+  
+  // const countyLI: HTMLLIElement = document.createElement('li');
+  // countyLI.innerHTML = obj.county as Property['county'];
+  // const statusLI: HTMLLIElement = document.createElement('li');
+  // statusLI.innerHTML = obj.status as Property['status'];
+
+
+  propertyListItem.append(
+    headingLI,
+    //countyLI,
+    propertyTypeLI,
+    bedroomsLI,
+    bathroomsLI,
+    squareFootageLI,
+    lotSizeLI,
+    yearBuiltLI,
+    priceLI,
+    listedDateLI,
+    // addressLine1LI,
+    // cityLI,
+    // stateLI,
+    // zipCodeLI,
+    formattedAddressLI,
+    //statusLI,
+    daysOnMarketLI,
+  );
+  allProperties.append(propertyListItem);
+};
+
+async function fetchData(
+  query: string,
+  minPrice: number,
+  maxPrice: number,
+): Promise<void> {
   try {
     const url =
       'https://realty-mole-property-api.p.rapidapi.com/saleListings?' + query;
@@ -358,10 +265,38 @@ async function fetchData(query: string): Promise<Array<APIData> | undefined> {
 
     const data: Promise<Array<APIData>> = await res.json();
 
-    return data;
+    (await data).forEach(listing => {
+      const price = listing.price;
+      if (minPrice <= price && price <= maxPrice) {
+        const newProperty = new Property(
+          listing.county,
+          listing.propertyType,
+          listing.bedrooms,
+          listing.bathrooms,
+          listing.squareFootage,
+          listing.lotSize,
+          listing.yearBuilt,
+          listing.price,
+          listing.listedDate,
+          listing.addressLine1,
+          listing.city,
+          listing.state,
+          listing.zipCode,
+          listing.formattedAddress,
+          listing.lastSeen,
+          listing.createdDate,
+          listing.status,
+          listing.removedDate,
+          listing.daysOnMarket,
+          listing.id,
+          listing.latitude,
+          listing.longitude,
+        );
+        makeListItem(newProperty);
+      }
+    });
   } catch (error) {
     console.log('Error!', error);
-    return;
   }
 }
 

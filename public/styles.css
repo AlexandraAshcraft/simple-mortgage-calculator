@@ -27,3 +27,7 @@ button {
     max-width: 100px;
     background-color: lightblue;
 }
+
+ul {
+    list-style-type: none;
+}

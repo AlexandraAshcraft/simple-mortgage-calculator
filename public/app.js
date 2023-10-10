@@ -95,78 +95,13 @@ apiForm.addEventListener('submit', (e) => {
     const paramsString = makeParamsString(zipCode, propertyTypes);
     if (Array.isArray(paramsString)) {
         paramsString.forEach(string => {
-            const data = fetchData(string);
-            if (data !== undefined) {
-                data.forEach(listing => {
-                    if (minPrice <= listing.price && listing.price <= maxPrice) {
-                        const newProperty = new Property(listing.county, listing.propertyType, listing.bedrooms, listing.bathrooms, listing.squareFootage, listing.lotSize, listing.yearBuilt, listing.price, listing.listedDate, listing.addressLine1, listing.city, listing.state, listing.zipCode, listing.formattedAddress, listing.lastSeen, listing.createdDate, listing.status, listing.removedDate, listing.daysOnMarket, listing.id, listing.latitude, listing.longitude);
-                        makeListItem(newProperty);
-                    }
-                });
-            }
+            const data = fetchData(string, minPrice, maxPrice);
         });
     }
     else {
-        const data = fetchData(paramsString);
-        if (data !== undefined) {
-            data.forEach(listing => {
-                if (minPrice <= listing.price && listing.price <= maxPrice) {
-                    const newProperty = new Property(listing.county, listing.propertyType, listing.bedrooms, listing.bathrooms, listing.squareFootage, listing.lotSize, listing.yearBuilt, listing.price, listing.listedDate, listing.addressLine1, listing.city, listing.state, listing.zipCode, listing.formattedAddress, listing.lastSeen, listing.createdDate, listing.status, listing.removedDate, listing.daysOnMarket, listing.id, listing.latitude, listing.longitude);
-                    makeListItem(newProperty);
-                }
-            });
-        }
+        const data = fetchData(paramsString, minPrice, maxPrice);
     }
 });
-const parseResults = (arr, minPrice, maxPrice) => {
-    arr.forEach(listing => {
-        const price = listing.price;
-        if (minPrice <= price && price <= maxPrice) {
-            const newProperty = new Property(listing.county, listing.propertyType, listing.bedrooms, listing.bathrooms, listing.squareFootage, listing.lotSize, listing.yearBuilt, listing.price, listing.listedDate, listing.addressLine1, listing.city, listing.state, listing.zipCode, listing.formattedAddress, listing.lastSeen, listing.createdDate, listing.status, listing.removedDate, listing.daysOnMarket, listing.id, listing.latitude, listing.longitude);
-            makeListItem(newProperty);
-        }
-    });
-};
-const makeListItem = (obj) => {
-    const allProperties = document.querySelector('.apiSearchResults');
-    const propertyListItem = document.createElement('li');
-    const propertyList = document.createElement('ul');
-    const countyLI = document.createElement('li');
-    countyLI.innerHTML = obj.county;
-    const propertyTypeLI = document.createElement('li');
-    propertyTypeLI.innerHTML = obj.propertyType;
-    const bedroomsLI = document.createElement('li');
-    countyLI.innerHTML = obj.bedrooms;
-    const bathroomsLI = document.createElement('li');
-    bathroomsLI.innerHTML = obj.bathrooms;
-    const squareFootageLI = document.createElement('li');
-    squareFootageLI.innerHTML = obj.squareFootage;
-    const lotSizeLI = document.createElement('li');
-    lotSizeLI.innerHTML = obj.lotSize;
-    const yearBuiltLI = document.createElement('li');
-    yearBuiltLI.innerHTML = obj.yearBuilt;
-    const priceLI = document.createElement('li');
-    priceLI.innerHTML = obj.price;
-    const listedDateLI = document.createElement('li');
-    listedDateLI.innerHTML = obj.listedDate;
-    const addressLine1LI = document.createElement('li');
-    addressLine1LI.innerHTML = obj.addressLine1;
-    const cityLI = document.createElement('li');
-    cityLI.innerHTML = obj.city;
-    const stateLI = document.createElement('li');
-    stateLI.innerHTML = obj.state;
-    const zipCodeLI = document.createElement('li');
-    zipCodeLI.innerHTML = obj.zipCode;
-    const formattedAddressLI = document.createElement('li');
-    formattedAddressLI.innerHTML =
-        obj.formattedAddress;
-    const statusLI = document.createElement('li');
-    statusLI.innerHTML = obj.status;
-    const daysOnMarketLI = document.createElement('li');
-    daysOnMarketLI.innerHTML = obj.daysOnMarket;
-    propertyListItem.append(countyLI, propertyTypeLI, bedroomsLI, bathroomsLI, squareFootageLI, lotSizeLI, yearBuiltLI, priceLI, listedDateLI, addressLine1LI, cityLI, stateLI, zipCodeLI, formattedAddressLI, statusLI, daysOnMarketLI);
-    allProperties.append(propertyListItem);
-};
 const makeParamsString = (zipCode, propertyTypes) => {
     if (!propertyTypes) {
         const paramsString = new URLSearchParams({ zipCode: zipCode });
@@ -191,7 +126,58 @@ const makeParamsString = (zipCode, propertyTypes) => {
         return urls;
     }
 };
-function fetchData(query) {
+const makeListItem = (obj) => {
+    const allProperties = document.querySelector('.apiSearchResults');
+    const propertyListItem = document.createElement('li');
+    const propertyList = document.createElement('ul');
+    const headingLI = document.createElement('h3');
+    headingLI.innerHTML = 'Listing:';
+    const formattedAddressLI = document.createElement('li');
+    formattedAddressLI.innerHTML =
+        `Address: ${obj.formattedAddress}`;
+    const priceLI = document.createElement('li');
+    priceLI.innerHTML = `Price: ${obj.price}`;
+    const propertyTypeLI = document.createElement('li');
+    propertyTypeLI.innerHTML = `Property Type: ${obj.propertyType}`;
+    const bedroomsLI = document.createElement('li');
+    bedroomsLI.innerHTML = `Bedrooms: ${obj.bedrooms}`;
+    const bathroomsLI = document.createElement('li');
+    bathroomsLI.innerHTML = `Bathrooms: ${obj.bathrooms}`;
+    const squareFootageLI = document.createElement('li');
+    squareFootageLI.innerHTML = `Square Footage: ${obj.squareFootage}sq ft`;
+    const lotSizeLI = document.createElement('li');
+    lotSizeLI.innerHTML = `Lot Size: ${obj.lotSize}sq ft`;
+    const yearBuiltLI = document.createElement('li');
+    yearBuiltLI.innerHTML = `Year Built: ${obj.yearBuilt}`;
+    const listedDateLI = document.createElement('li');
+    listedDateLI.innerHTML = `Date Listed: ${obj.listedDate.slice(0, 10)}`;
+    const daysOnMarketLI = document.createElement('li');
+    daysOnMarketLI.innerHTML = `Days on Market: ${obj.daysOnMarket}`;
+    // const addressLine1LI: HTMLLIElement = document.createElement('li');
+    // addressLine1LI.innerHTML = obj.addressLine1 as Property['addressLine1'];
+    // const cityLI: HTMLLIElement = document.createElement('li');
+    // cityLI.innerHTML = obj.city as Property['city'];
+    // const stateLI: HTMLLIElement = document.createElement('li');
+    // stateLI.innerHTML = obj.state as Property['state'];
+    // const zipCodeLI: HTMLLIElement = document.createElement('li');
+    // zipCodeLI.innerHTML = obj.zipCode as Property['zipCode'];
+    // const countyLI: HTMLLIElement = document.createElement('li');
+    // countyLI.innerHTML = obj.county as Property['county'];
+    // const statusLI: HTMLLIElement = document.createElement('li');
+    // statusLI.innerHTML = obj.status as Property['status'];
+    propertyListItem.append(headingLI, 
+    //countyLI,
+    propertyTypeLI, bedroomsLI, bathroomsLI, squareFootageLI, lotSizeLI, yearBuiltLI, priceLI, listedDateLI, 
+    // addressLine1LI,
+    // cityLI,
+    // stateLI,
+    // zipCodeLI,
+    formattedAddressLI, 
+    //statusLI,
+    daysOnMarketLI);
+    allProperties.append(propertyListItem);
+};
+function fetchData(query, minPrice, maxPrice) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const url = 'https://realty-mole-property-api.p.rapidapi.com/saleListings?' + query;
@@ -206,11 +192,16 @@ function fetchData(query) {
             if (!res.ok)
                 throw new Error('Error fetching data');
             const data = yield res.json();
-            return data;
+            (yield data).forEach(listing => {
+                const price = listing.price;
+                if (minPrice <= price && price <= maxPrice) {
+                    const newProperty = new Property(listing.county, listing.propertyType, listing.bedrooms, listing.bathrooms, listing.squareFootage, listing.lotSize, listing.yearBuilt, listing.price, listing.listedDate, listing.addressLine1, listing.city, listing.state, listing.zipCode, listing.formattedAddress, listing.lastSeen, listing.createdDate, listing.status, listing.removedDate, listing.daysOnMarket, listing.id, listing.latitude, listing.longitude);
+                    makeListItem(newProperty);
+                }
+            });
         }
         catch (error) {
             console.log('Error!', error);
-            return;
         }
     });
 }
