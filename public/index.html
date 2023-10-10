@@ -8,6 +8,7 @@
   </head>
   <body>
     <main>
+      <h2>Calculate Mortgage:</h2>
       <div class="calculations">
         <form class="calculation-form">
           <label for="price">Property Price ($):</label>
@@ -44,7 +45,6 @@
           <label for="credit">Credit Score:</label>
           <input type="number" id="credit" name="credit" min="400" step="10" max="900"/>
 
-
           <button type="submit" class="submit-button">Calculate</button>
         </form>
 
@@ -58,22 +58,71 @@
           <p id="total-interest"></p>
           <button id="save-button">Save Calculation</button>
         </div>
+
+        <ul class="savedList">
+          <h3>Saved Results:</h3>
+        </ul>
       </div>
 
-      <ul class="savedList"></ul>
-      <div class="city-search">
-        <form>
-          <select class="home-type">
-            <option>Single Family</option>
-            <option>Condo</option>
-            <option>Multi Family</option>
-            <option>Apartment</option>
-            <option>Single Family</option>
-            <option>Single Family</option>
-          </select>
-        </form>
+      <h2>Search Listings:</h2>
+      <div class="api-search">
+          <form class="listing-search">
+            <!-- <div class="zipcode"> -->
+              <label for="zipcode">Zip Code:</label>
+              <input type="text" inputmode="numeric" name="zipcode" required></input>
+            <!-- </div> -->
+            <!-- <div name="property-type"> -->
+              <label for="property-type">Select Property Type:</label>
+  
+              <span style="display: block">
+                <input type="checkbox" name="single-family" id="single-family"/>
+                <label for="single-family">Single Family</label>
+              </span>
+              <span style="display: block">
+                <input type="checkbox" name="condo" id="condo"/>
+                <label for="condo">Condo</label>
+              </span>
+              <span style="display: block">
+                <input type="checkbox" name="townhouse" id="townhouse"/>
+                <label for="townhouse">Townhouse</label>
+              </span>
+              <span style="display: block">
+                <input type="checkbox" name="manufactured" id="manufactured"/>
+                <label for="manufactured">Manufactured</label>
+              </span>
+              <span style="display: block">
+                <input type="checkbox" name="duplex-triplex" id="duplex-triplex"/>
+                <label for="duplex-triplex">Duplex-Triplex</label>
+              </span>
+              <span style="display: block">
+                <input type="checkbox" name="apartment" id="apartment"/>
+                <label for="apartment">Apartment</label>
+              </span>
+              <span style="display: block">
+                <input type="checkbox" name="land" id="land"/>
+                <label for="land">Land</label>
+              </span>
+            <!-- </div> -->
+  
+            <!-- <div name="price-range"> -->
+              <label for="price-range">Select Your Price Range:</label>
+              <span style="display: block">
+                <label for="min-price">Minimum ($):</label>
+                <input type="number" min="200000" max="10000000" step="25000" value="200000" name="min-price"></input>
+              </span>
+              <span style="display: block">
+                <label for="max-price">Maximum ($):</label>
+                <input type="number" min="200000" max="10000000" step="25000" value="500000" name="min-price"></input>
+              </span>
+            <!-- </div> -->
+  
+  
+            <button type="submit" id="search-button">Search Listings</button>
+          </form>
+
+
       </div>
     </main>
-    <script src="./app.js"></script>
+    <script type="module" src="./app.js" ></script>
   </body>
 </html>

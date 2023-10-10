@@ -7,6 +7,10 @@ body {
     column-gap: 5rem;
 }
 
+.api-search{
+    display: flex;
+    column-gap: 5rem;
+}
 
 form {
     display: flex;
