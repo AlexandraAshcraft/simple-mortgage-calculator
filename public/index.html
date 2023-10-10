@@ -68,38 +68,38 @@
       <div class="api-search">
           <form class="listing-search">
             <!-- <div class="zipcode"> -->
-              <label for="zipcode">Zip Code:</label>
-              <input type="text" inputmode="numeric" name="zipcode" required></input>
+              <label for="zipCode">Zip Code:</label>
+              <input type="text" inputmode="numeric" name="zipCode" required></input>
             <!-- </div> -->
             <!-- <div name="property-type"> -->
               <label for="property-type">Select Property Type:</label>
   
               <span style="display: block">
-                <input type="checkbox" name="single-family" id="single-family"/>
+                <input type="checkbox" name="Single Family" id="single-family"/>
                 <label for="single-family">Single Family</label>
               </span>
               <span style="display: block">
-                <input type="checkbox" name="condo" id="condo"/>
+                <input type="checkbox" name="Condo" id="condo"/>
                 <label for="condo">Condo</label>
               </span>
               <span style="display: block">
-                <input type="checkbox" name="townhouse" id="townhouse"/>
+                <input type="checkbox" name="Townhouse" id="townhouse"/>
                 <label for="townhouse">Townhouse</label>
               </span>
               <span style="display: block">
-                <input type="checkbox" name="manufactured" id="manufactured"/>
+                <input type="checkbox" name="Manufactured" id="manufactured"/>
                 <label for="manufactured">Manufactured</label>
               </span>
               <span style="display: block">
-                <input type="checkbox" name="duplex-triplex" id="duplex-triplex"/>
+                <input type="checkbox" name="Duplex-Triplex" id="duplex-triplex"/>
                 <label for="duplex-triplex">Duplex-Triplex</label>
               </span>
               <span style="display: block">
-                <input type="checkbox" name="apartment" id="apartment"/>
+                <input type="checkbox" name="Apartment" id="apartment"/>
                 <label for="apartment">Apartment</label>
               </span>
               <span style="display: block">
-                <input type="checkbox" name="land" id="land"/>
+                <input type="checkbox" name="Land" id="land"/>
                 <label for="land">Land</label>
               </span>
             <!-- </div> -->
@@ -107,12 +107,12 @@
             <!-- <div name="price-range"> -->
               <label for="price-range">Select Your Price Range:</label>
               <span style="display: block">
-                <label for="min-price">Minimum ($):</label>
-                <input type="number" min="200000" max="10000000" step="25000" value="200000" name="min-price"></input>
+                <label for="minPrice">Minimum ($):</label>
+                <input type="number" min="200000" max="10000000" step="25000" value="200000" name="minPrice"></input>
               </span>
               <span style="display: block">
-                <label for="max-price">Maximum ($):</label>
-                <input type="number" min="200000" max="10000000" step="25000" value="500000" name="min-price"></input>
+                <label for="maxPrice">Maximum ($):</label>
+                <input type="number" min="200000" max="10000000" step="25000" value="500000" name="maxPrice"></input>
               </span>
             <!-- </div> -->
   
@@ -120,7 +120,7 @@
             <button type="submit" id="search-button">Search Listings</button>
           </form>
 
-
+          <ul class="apiSearchResults"></ul>
       </div>
     </main>
     <script type="module" src="./app.js" ></script>
