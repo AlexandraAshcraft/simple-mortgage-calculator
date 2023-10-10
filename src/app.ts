@@ -1,4 +1,5 @@
 import { Mortgage } from './classes/Mortgage.js';
+import { Search } from './classes/Search.js';
 import { Buyer } from './classes/Buyer.js';
 
 //downside of importing/exporting, we are not bundling our files here, so the browser makes separate requests to the network for these files. if you use webpack or vite it will bundle the code into a single file so there will only be one network request
@@ -48,11 +49,13 @@ calculatorForm.addEventListener('submit', (e: Event) => {
   //prevents page refresh
   e.preventDefault();
   const currentMortgage = handleFormData();
-  console.log('currentMortgage', currentMortgage)
+  console.log('currentMortgage', currentMortgage);
 
   monthlyPayment.innerHTML = `$${currentMortgage.calculateMonthlyPayment()}`;
   totalPayment.innerHTML = `$${currentMortgage.calculateTotalPayment()}`;
   totalInterest.innerHTML = `$${currentMortgage.calculateTotalInterest()}`;
+
+  return false;
 });
 
 //saves calculated data into a bullet point
@@ -65,15 +68,15 @@ save.addEventListener('click', (e: Event) => {
   const resultList = document.createElement('ul') as HTMLUListElement;
   const result = document.createElement('li') as HTMLLIElement;
   const homePrice: HTMLLIElement = document.createElement('li');
-  homePrice.innerHTML =`Home Price: $${currentMortgage.price}`;
+  homePrice.innerHTML = `Home Price: $${currentMortgage.price}`;
 
   const loanAmount: HTMLLIElement = document.createElement('li');
   loanAmount.innerHTML = `Loan Amount: $${currentMortgage.loanAmount}`;
 
-  const interestRate: HTMLLIElement = document.createElement('li'); 
+  const interestRate: HTMLLIElement = document.createElement('li');
   interestRate.innerHTML = `Interest Rate: ${currentMortgage.rate}%`;
 
-  const monthlyPayment: HTMLLIElement = document.createElement('li'); 
+  const monthlyPayment: HTMLLIElement = document.createElement('li');
   monthlyPayment.innerHTML = `Monthly Payment: $${currentMortgage.calculateMonthlyPayment()}`;
 
   const totalPayment: HTMLLIElement = document.createElement('li');
@@ -91,6 +94,8 @@ save.addEventListener('click', (e: Event) => {
   );
   result.append(resultList);
   savedList.append(result);
+
+  return false;
 });
 
 class Property {
@@ -109,13 +114,27 @@ apiForm.addEventListener('submit', (e: Event) => {
   e.preventDefault();
   const data = new FormData(apiForm, apiButton);
   const entries: [string, FormDataEntryValue][] = [...data.entries()];
-  const options: Record<string, string> ={};
-  console.log(entries);
-  entries.forEach((entry: [string, FormDataEntryValue])=> {
-    if (entry[0] === 'zipcode') {options['zipcode'] as string = entry[1]};
-  })
+  const createSearch = (): Search=> {
+    const obj = {};
+      
+    entries.forEach((entry: [string, FormDataEntryValue]) => {
+      if (entry[1] === 'on' && !obj['type']) {
+        obj['type'] = [entry[0]];
+      } else if (entry[1] === 'on' && obj.hasOwnProperty('type')) {
+        obj['type'].push(entry[0] as string);
+      } else {
+        obj[entry[0]] = entry[1] as string;
+      }
+    });
+    return obj;
+  };
 
+  console.log(obj);
+  // const options: Search ={
+  //   zipcode: data.get('zipcode') as number;
+  //   type: data.get('')
 
+  // };
 });
 
 // const fetchFromAPI = async (zipCode: number) => {

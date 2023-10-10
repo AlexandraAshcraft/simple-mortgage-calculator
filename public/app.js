@@ -34,6 +34,7 @@ calculatorForm.addEventListener('submit', (e) => {
     monthlyPayment.innerHTML = `$${currentMortgage.calculateMonthlyPayment()}`;
     totalPayment.innerHTML = `$${currentMortgage.calculateTotalPayment()}`;
     totalInterest.innerHTML = `$${currentMortgage.calculateTotalInterest()}`;
+    return false;
 });
 //saves calculated data into a bullet point
 save.addEventListener('click', (e) => {
@@ -57,6 +58,7 @@ save.addEventListener('click', (e) => {
     resultList.append(homePrice, loanAmount, interestRate, monthlyPayment, totalPayment, totalInterest);
     result.append(resultList);
     savedList.append(result);
+    return false;
 });
 class Property {
     constructor(type, price) {
@@ -70,15 +72,26 @@ apiForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const data = new FormData(apiForm, apiButton);
     const entries = [...data.entries()];
-    const options = {};
-    console.log(entries);
-    entries.forEach((entry) => {
-        if (entry[0] === 'zipcode') {
-            options['zipcode'];
-            entry[1];
-        }
-        ;
-    });
+    const createSearch = () => {
+        const obj = {};
+        entries.forEach((entry) => {
+            if (entry[1] === 'on' && !obj['type']) {
+                obj['type'] = [entry[0]];
+            }
+            else if (entry[1] === 'on' && obj.hasOwnProperty('type')) {
+                obj['type'].push(entry[0]);
+            }
+            else {
+                obj[entry[0]] = entry[1];
+            }
+        });
+        return obj;
+    };
+    console.log(obj);
+    // const options: Search ={
+    //   zipcode: data.get('zipcode') as number;
+    //   type: data.get('')
+    // };
 });
 // const fetchFromAPI = async (zipCode: number) => {
 //   const controller = new AbortController();
