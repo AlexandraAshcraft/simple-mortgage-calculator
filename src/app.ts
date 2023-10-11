@@ -1,8 +1,139 @@
-import { Mortgage } from './classes/Mortgage.js';
-import { APIData } from './interfaces/interfaces.js';
-import { Property } from './classes/Property.js';
+// import { Mortgage } from './classes/Mortgage.js';
+// import { APIData } from './interfaces/interfaces.js';
+// import { Property } from './classes/Property.js';
 
 //downside of importing/exporting, we are not bundling our files here, so the browser makes separate requests to the network for these files. if you use webpack or vite it will bundle the code into a single file so there will only be one network request
+//classes
+interface APIData {
+  county: string;
+  propertyType: string;
+  bedrooms: number;
+  bathrooms: number;
+  squareFootage: number;
+  lotSize: number;
+  yearBuilt: number;
+  price: number;
+  listedDate: string;
+  addressLine1: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  formattedAddress: string;
+  lastSeen: string;
+  createdDate: string;
+  status: string;
+  removedDate: null;
+  daysOnMarket: number;
+  id: string;
+  latitude: number;
+  longitude: number;
+}
+
+class Property implements APIData {
+  county: string;
+  propertyType: string;
+  bedrooms: number;
+  bathrooms: number;
+  squareFootage: number;
+  lotSize: number;
+  yearBuilt: number;
+  price: number;
+  listedDate: string;
+  addressLine1: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  formattedAddress: string;
+  lastSeen: string;
+  createdDate: string;
+  status: string;
+  removedDate: null;
+  daysOnMarket: number;
+  id: string;
+  latitude: number;
+  longitude: number;
+
+  constructor(
+    county: string,
+    propertyType: string,
+    bedrooms: number,
+    bathrooms: number,
+    squareFootage: number,
+    lotSize: number,
+    yearBuilt: number,
+    price: number,
+    listedDate: string,
+    addressLine1: string,
+    city: string,
+    state: string,
+    zipCode: string,
+    formattedAddress: string,
+    lastSeen: string,
+    createdDate: string,
+    status: string,
+    removedDate: null,
+    daysOnMarket: number,
+    id: string,
+    latitude: number,
+    longitude: number,
+  ) {
+    this.county = county;
+    this.propertyType = propertyType;
+    this.bedrooms = bedrooms;
+    this.bathrooms = bathrooms;
+    this.squareFootage = squareFootage;
+    this.lotSize = lotSize;
+    this.yearBuilt = yearBuilt;
+    this.price = price;
+    this.listedDate = listedDate;
+    this.addressLine1 = addressLine1;
+    this.city = city;
+    this.state = state;
+    this.zipCode = zipCode;
+    this.formattedAddress = formattedAddress;
+    this.lastSeen = lastSeen;
+    this.createdDate = createdDate;
+    this.status = status;
+    this.removedDate = null;
+    this.daysOnMarket = daysOnMarket;
+    this.id = id;
+    this.latitude = latitude;
+    this.longitude = longitude;
+  }
+}
+
+class Mortgage {
+  price: number;
+  down: number;
+  rate: number;
+  term: number;
+  loanAmount: number;
+  numPayments: number;
+
+  constructor(price: number, down: number, rate: number, term: number) {
+    this.price = price;
+    this.down = down;
+    this.rate = rate;
+    this.term = term;
+    this.loanAmount = this.price - this.price * (this.down / 100);
+    this.numPayments = this.term * 12;
+  }
+
+  calculateMonthlyPayment(): string {
+    const monthlyRate = this.rate / 1200;
+    const power = Math.pow(1 + monthlyRate, this.numPayments);
+    const payment = this.loanAmount * ((monthlyRate * power) / (power - 1));
+    return payment.toFixed(2);
+  }
+  calculateTotalPayment(): string {
+    return (Number(this.calculateMonthlyPayment()) * this.numPayments).toFixed(
+      2,
+    );
+  }
+  calculateTotalInterest(): string {
+    return (Number(this.calculateTotalPayment()) - this.price).toFixed(2);
+  }
+}
 
 const submit: HTMLButtonElement = document.querySelector('.submit-button')!;
 //typecasting
@@ -10,11 +141,6 @@ const calculatorForm = document.querySelector(
   '.calculation-form',
 ) as HTMLFormElement;
 //
-//inputs
-// const price = document.querySelector('#price') as HTMLInputElement;
-// const down = document.querySelector('#down') as HTMLInputElement;
-// const rate = document.querySelector('#rate') as HTMLInputElement;
-// const term = document.querySelector('#term') as HTMLInputElement;
 
 //query select output locations
 const monthlyPayment = document.querySelector(
@@ -28,23 +154,7 @@ const totalInterest = document.querySelector(
 const save = document.querySelector('#save-button') as HTMLButtonElement;
 const savedList = document.querySelector('.savedList') as HTMLUListElement;
 
-// const handleFormData = () => {
-//   const data = new FormData(calculatorForm, submit);
-//   const price = data.get('price') as unknown as number;
-//   const down = data.get('down') as unknown as number;
-//   const rate = data.get('rate') as unknown as number;
-//   const term = data.get('term') as unknown as number;
-
-//   const entries: [string, FormDataEntryValue][] = [...data.entries()];
-//   // utility type Record constructs an object type whose property keys are keys and whose property values are values.  this can be used to map the properties of a type to another type
-//   const submitted: Record<string, number> = {};
-//   entries.forEach((entry: [string, FormDataEntryValue]) => {
-//     submitted[entry[0]] = Number(entry[1]);
-//   });
-//   const currentMortgage = new Mortgage(price, down, rate, term);
-//   return currentMortgage;
-// };
-
+//adding event listener to handle form submission for calculator
 calculatorForm.addEventListener('submit', (e: Event) => {
   //prevents page refresh
   e.preventDefault();
@@ -110,9 +220,11 @@ save.addEventListener('click', (e: Event) => {
   return false;
 });
 
+//query select form and button items
 const apiForm = document.querySelector('.listing-search') as HTMLFormElement;
 const apiButton = document.querySelector('.search-button') as HTMLButtonElement;
 
+//add event listener to api form
 apiForm.addEventListener('submit', (e: Event) => {
   e.preventDefault();
   const data = new FormData(apiForm, apiButton);
@@ -137,6 +249,7 @@ apiForm.addEventListener('submit', (e: Event) => {
   }
 });
 
+//use form data to make query string for API fetch
 const makeParamsString = (
   zipCode: string,
   propertyTypes?: Array<string>,
@@ -164,6 +277,7 @@ const makeParamsString = (
   }
 };
 
+//parse data into a list item
 const makeListItem = (obj: Property) => {
   const allProperties = document.querySelector(
     '.apiSearchResults',
@@ -172,77 +286,61 @@ const makeListItem = (obj: Property) => {
   const propertyList = document.createElement('ul') as HTMLUListElement;
 
   const headingLI: HTMLHeadingElement = document.createElement('h3');
-  headingLI.innerHTML = 'Listing:'
+  headingLI.innerHTML = 'Listing:';
   const formattedAddressLI: HTMLLIElement = document.createElement('li');
   formattedAddressLI.innerHTML =
     `Address: ${obj.formattedAddress}` as Property['formattedAddress'];
-    
+
   const priceLI: HTMLLIElement = document.createElement('li');
   priceLI.innerHTML = `Price: ${obj.price}` as unknown as string;
-  
+
   const propertyTypeLI: HTMLLIElement = document.createElement('li');
-  propertyTypeLI.innerHTML = `Property Type: ${obj.propertyType}` as Property['propertyType'];
-  
+  propertyTypeLI.innerHTML =
+    `Property Type: ${obj.propertyType}` as Property['propertyType'];
+
   const bedroomsLI: HTMLLIElement = document.createElement('li');
   bedroomsLI.innerHTML = `Bedrooms: ${obj.bedrooms}` as unknown as string;
-  
+
   const bathroomsLI: HTMLLIElement = document.createElement('li');
   bathroomsLI.innerHTML = `Bathrooms: ${obj.bathrooms}` as unknown as string;
-  
+
   const squareFootageLI: HTMLLIElement = document.createElement('li');
-  squareFootageLI.innerHTML = `Square Footage: ${obj.squareFootage}sq ft` as unknown as string;
-  
+  squareFootageLI.innerHTML =
+    `Square Footage: ${obj.squareFootage}sq ft` as unknown as string;
+
   const lotSizeLI: HTMLLIElement = document.createElement('li');
   lotSizeLI.innerHTML = `Lot Size: ${obj.lotSize}sq ft` as unknown as string;
-  
+
   const yearBuiltLI: HTMLLIElement = document.createElement('li');
   yearBuiltLI.innerHTML = `Year Built: ${obj.yearBuilt}` as unknown as string;
-  
-  const listedDateLI: HTMLLIElement = document.createElement('li');
-  listedDateLI.innerHTML = `Date Listed: ${obj.listedDate.slice(0, 10)}` as Property['listedDate'];
-  
-  const daysOnMarketLI: HTMLLIElement = document.createElement('li');
-  daysOnMarketLI.innerHTML = `Days on Market: ${obj.daysOnMarket}` as unknown as string;
-  // const addressLine1LI: HTMLLIElement = document.createElement('li');
-  // addressLine1LI.innerHTML = obj.addressLine1 as Property['addressLine1'];
-  
-  // const cityLI: HTMLLIElement = document.createElement('li');
-  // cityLI.innerHTML = obj.city as Property['city'];
-  
-  // const stateLI: HTMLLIElement = document.createElement('li');
-  // stateLI.innerHTML = obj.state as Property['state'];
-  
-  // const zipCodeLI: HTMLLIElement = document.createElement('li');
-  // zipCodeLI.innerHTML = obj.zipCode as Property['zipCode'];
-  
-  // const countyLI: HTMLLIElement = document.createElement('li');
-  // countyLI.innerHTML = obj.county as Property['county'];
-  // const statusLI: HTMLLIElement = document.createElement('li');
-  // statusLI.innerHTML = obj.status as Property['status'];
 
+  const listedDateLI: HTMLLIElement = document.createElement('li');
+  listedDateLI.innerHTML = `Date Listed: ${obj.listedDate.slice(
+    0,
+    10,
+  )}` as Property['listedDate'];
+
+  const daysOnMarketLI: HTMLLIElement = document.createElement('li');
+  daysOnMarketLI.innerHTML =
+    `Days on Market: ${obj.daysOnMarket}` as unknown as string;
 
   propertyListItem.append(
     headingLI,
-    //countyLI,
+    formattedAddressLI,
+    priceLI,
     propertyTypeLI,
     bedroomsLI,
     bathroomsLI,
     squareFootageLI,
     lotSizeLI,
     yearBuiltLI,
-    priceLI,
     listedDateLI,
-    // addressLine1LI,
-    // cityLI,
-    // stateLI,
-    // zipCodeLI,
-    formattedAddressLI,
-    //statusLI,
     daysOnMarketLI,
   );
   allProperties.append(propertyListItem);
 };
 
+//fetch data
 async function fetchData(
   query: string,
   minPrice: number,
@@ -300,125 +398,3 @@ async function fetchData(
   }
 }
 
-//Extra practice with classes
-
-type AddFunction = (num1: number, num2: number) => number;
-type SubtractFunction = (num1: number, num2: number) => number;
-interface MultiplyFunction {
-  (num1: number, num2: number): number;
-}
-
-//union type
-type MathFunc = '+' | '-';
-//conditional type
-type handleMath<A extends MathFunc> = A extends '+'
-  ? AddFunction
-  : A extends '-'
-  ? SubtractFunction
-  : never;
-
-const mathAdd: handleMath<'+'> = (num1: number, num2: number) => (num1 += num2);
-const mathSubtract: handleMath<'-'> = (num1: number, num2: number) =>
-  (num1 -= num2);
-
-type Species = 'cat' | 'dog';
-
-type Animal = {
-  readonly kind: string;
-  mammal: boolean;
-};
-
-const giraffe: Animal = {
-  kind: 'giraffe',
-  mammal: true,
-};
-
-interface Pet {
-  species: Species;
-  //readonly index signature
-  readonly name?: string;
-}
-
-class Cat implements Pet {
-  name?: string;
-  public species: Species = 'cat';
-  public age: number;
-  public meow(): void {
-    console.log('hi meow');
-  }
-  private litter(): string {
-    return 'in the garage';
-  }
-  public claw: () => string;
-
-  constructor(
-    name: string,
-    age: number,
-    myFunc: (name: string, age: number) => string,
-  ) {
-    this.name = name;
-    this.age = age;
-    this.claw = () => myFunc(this.name!, this.age);
-  }
-}
-
-let b: ReadonlyArray<number> = [1, 2, 3];
-
-//pet is cat is boolean
-//type guards
-function petIsCat(pet: Pet): pet is Cat {
-  return pet.species === 'cat';
-}
-
-const years = (a: string, b: number): string => {
-  return `I have had ${a} for ${b} years`;
-};
-
-const p: Pet = new Cat('socks', 2, years);
-
-if (petIsCat(p)) p.meow();
-
-let pussy = new Cat('boots', 7, years);
-pussy.claw();
-pussy.name;
-pussy.meow();
-pussy.meow;
-pussy.species;
-petIsCat(pussy);
-//pussy.litter()
-
-interface ICustomImage {
-  data: string;
-  width: number;
-  height: number;
-}
-
-type UserImage = string | ICustomImage;
-
-interface IUser {
-  id: number;
-  firstName: string;
-  lastName: string;
-  image: UserImage;
-}
-
-//BAD! because of intersection of userImage, compiler can't know the type
-const badUser: IUser = {
-  id: 1,
-  firstName: 'Alexandra',
-  lastName: 'Ashcraft',
-  image: 'image-url',
-};
-
-//typescript does not infer that it is a string and does not give you access to those methods
-badUser.image;
-
-const goodUser = {
-  id: 1,
-  firstName: 'Alexandra',
-  lastName: 'Ashcraft',
-  image: 'image-url',
-} satisfies IUser;
-
-//typescript can infer that it is a string now and gives you the methods
-goodUser.image;
